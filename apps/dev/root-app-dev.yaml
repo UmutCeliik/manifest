@@ -1,0 +1,28 @@
+# apps/dev/root-app-dev.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root-dev
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    # Bu uygulama, GitOps reposunun kendisini izler.
+    repoURL: 'https://dev.azure.com/umutcelik0234/HelpDesk_App/_git/helpdesk-gitops-manifests'
+    targetRevision: HEAD
+    # İzleyeceği klasör: environments/dev
+    path: environments/dev
+    # Bu klasördeki tüm yaml'ları tanıması için
+    directory:
+      recurse: true
+  destination:
+    # Bu uygulamanın kendisi bir şey kurmaz, sadece başka "Application"
+    # nesneleri oluşturur, bu yüzden hedefi argocd namespace'idir.
+    server: 'https://kubernetes.default.svc'
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
