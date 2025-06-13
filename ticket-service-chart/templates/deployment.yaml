@@ -19,20 +19,6 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
-      initContainers:
-        - name: alembic-migration
-          # Ana konteyner ile aynı imajı kullan
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          # Çalışma dizinini ayarla
-          workingDir: /app/ticket_service
-          # Sadece migration komutunu çalıştır
-          command: ["alembic", "upgrade", "head"]
-          # Ana konteyner ile aynı ortam değişkenlerini ver, çünkü DB'ye erişmesi gerekiyor
-          env:
-            - name: DATABASE_URL
-              value: {{ .Values.config.databaseUrl }}
-            # Gerekliyse diğer env'leri de ekleyebilirsiniz.
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001
