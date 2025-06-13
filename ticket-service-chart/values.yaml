@@ -1,0 +1,15 @@
+# ticket-service-chart/values.yaml
+replicaCount: 1
+
+image:
+  repository: harbor.cloudpro.com.tr/helpdesk/ticket_service # Depo adını güncelledik
+  pullPolicy: IfNotPresent
+  tag: "104" # Harbor'daki geçerli bir ticket_service etiketi
+
+service:
+  type: ClusterIP
+  port: 80
+
+config:
+  # Veritabanı adını ve servis adını güncelledik
+  databaseUrl: "postgresql://ticket_admin:Passw0rd12.@ticket-db-postgresql:5432/ticket_db"
