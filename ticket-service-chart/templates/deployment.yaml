@@ -1,4 +1,4 @@
-# ticket-service-chart/templates/deployment.yaml (Tüm Düzeltmelerle Nihai Hali)
+# ticket-service-chart/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -36,8 +36,6 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8000
-          
-          # --- YENİ EKLENEN BÖLÜM: KAYNAK LİMİTLERİ ---
           resources:
             requests:
               memory: "256Mi"
@@ -45,13 +43,10 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
-
-          # --- GÜNCELLENMİŞ BÖLÜM: TÜM ORTAM DEĞİŞKENLERİ ---
           env:
             - name: DATABASE_URL
               value: {{ .Values.config.databaseUrl }}
             
-            # Keycloak için hassas olmayan değişkenler
             - name: KEYCLOAK_ISSUER_URI
               value: "http://keycloak.cloudpro.com.tr/realms/helpdesk-realm"
             - name: KEYCLOAK_JWKS_URI
@@ -61,27 +56,25 @@ spec:
             - name: KEYCLOAK_ADMIN_CLIENT_ID
               value: "ticket-service-admin-client"
 
-            # Keycloak için hassas değişken (Secret'tan alınıyor)
             - name: KEYCLOAK_ADMIN_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: ticket-service-secrets 
                   key: KEYCLOAK_ADMIN_CLIENT_SECRET
-          # --- GÜNCELLEME SONU ---
 
           readinessProbe:
             httpGet:
-              path: /
+              path: /healthz
               port: 8000
-            initialDelaySeconds: 20 # Başlangıç için biraz daha zaman tanıyalım
+            initialDelaySeconds: 30 # Başlangıç için biraz daha zaman tanıyalım
             periodSeconds: 15
             timeoutSeconds: 5
             failureThreshold: 3
           livenessProbe:
             httpGet:
-              path: /
+              path: /healthz
               port: 8000
-            initialDelaySeconds: 40 # Başlangıç için biraz daha zaman tanıyalım
+            initialDelaySeconds: 60 # Başlangıç için biraz daha zaman tanıyalım
             periodSeconds: 20
             timeoutSeconds: 5
             failureThreshold: 3
