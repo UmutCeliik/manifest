@@ -1,9 +1,13 @@
-# user-service-chart/templates/deployment.yaml (Güvenlik Konteksti Eklenmiş Nihai Hali)
+# user-service-chart/templates/deployment.yaml (Sertifika Ekleme Çözümlü Nihai Hali)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}
 spec:
+  hostAliases: # DNS Çözümlemesi için
+  - ip: "10.77.3.203"
+    hostnames:
+    - "harbor.cloudpro.com.tr"
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
@@ -13,26 +17,41 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
-      # --- YENİ EKLENEN POD GÜVENLİK AYARLARI ---
+      # --- YENİ EKLENEN BÖLÜM: SERTİFİKA VOLUME'Ü ---
+      volumes:
+      - name: harbor-ca-vol
+        configMap:
+          name: harbor-ca # Adım 1'de oluşturduğumuz ConfigMap'in adı
+      # --- YENİ BÖLÜM SONU ---
       securityContext:
-        runAsNonRoot: true # Pod'un root olarak çalışmasını engeller
-        runAsUser: 1001     # Konteynerin çalışacağı kullanıcı ID'si (Bitnami imajları için 1001 yaygındır)
-        fsGroup: 1001       # Dosya sistemine erişim için grup ID'si
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
         seccompProfile:
-          type: RuntimeDefault # Güvenli seccomp profili
+          type: RuntimeDefault
       containers:
         - name: user-service
-          # --- YENİ EKLENEN KONTEYNER GÜVENLİK AYARLARI ---
           securityContext:
-            allowPrivilegeEscalation: false # Yetki yükseltmeyi engeller
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
-                - "ALL" # Tüm Linux yeteneklerini kaldırır
+                - "ALL"
+          # --- YENİ EKLENEN BÖLÜM: SERTİFİKA MOUNT'U ---
+          volumeMounts:
+          - name: harbor-ca-vol
+            mountPath: /etc/ssl/certs/harbor.cloudpro.com.tr.crt
+            subPath: harbor.cloudpro.com.tr.crt
+            readOnly: true
+          # --- YENİ BÖLÜM SONU ---
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8000
           env:
+            # --- YENİ EKLENEN BÖLÜM: SERTİFİKA ORTAM DEĞİŞKENİ ---
+            - name: SSL_CERT_FILE
+              value: /etc/ssl/certs/harbor.cloudpro.com.tr.crt
+            # --- YENİ BÖLÜM SONU ---
             - name: DATABASE_URL
               value: {{ .Values.config.databaseUrl }}
           readinessProbe:
