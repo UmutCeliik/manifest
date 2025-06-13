@@ -12,4 +12,4 @@ service:
 
 config:
   # Veritabanı adını ve servis adını güncelledik
-  databaseUrl: "postgresql://ticket_admin:Passw0rd12.@10.43.198.29:5432/ticket_db"
+  databaseUrl: "postgresql://ticket_admin:Passw0rd12.@10.43.43.21:5432/ticket_db"
