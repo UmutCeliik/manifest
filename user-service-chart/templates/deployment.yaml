@@ -1,15 +1,9 @@
-# user-service-chart/templates/deployment.yaml (Sertifika Ekleme Çözümlü Nihai Hali)
+# user-service-chart/templates/deployment.yaml (hostAliases Düzeltilmiş ve Temizlenmiş Son Hali)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}
 spec:
-  hostAliases: # DNS Çözümlemesi için
-  - ip: "10.77.3.203"
-    hostnames:
-    - "harbor.cloudpro.com.tr"
-    - "vault.cloudpro.com.tr" 
-    - "keycloak.cloudpro.com.tr"
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
@@ -19,7 +13,14 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
-      # --- YENİ BÖLÜM SONU ---
+      # hostAliases bloğunun doğru yeri burasıdır (pod'un spec'i içi)
+      hostAliases:
+      - ip: "10.77.3.203"
+        hostnames:
+        - "harbor.cloudpro.com.tr"
+        - "vault.cloudpro.com.tr"
+        - "keycloak.cloudpro.com.tr"
+      
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001
@@ -38,10 +39,6 @@ spec:
           ports:
             - containerPort: 8000
           env:
-            # --- YENİ EKLENEN BÖLÜM: SERTİFİKA ORTAM DEĞİŞKENİ ---
-            - name: SSL_CERT_FILE
-              value: /etc/ssl/certs/harbor.cloudpro.com.tr.crt
-            # --- YENİ BÖLÜM SONU ---
             - name: DATABASE_URL
               value: {{ .Values.config.databaseUrl }}
           readinessProbe:
