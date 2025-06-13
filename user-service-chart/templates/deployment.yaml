@@ -1,16 +1,18 @@
+# user-service-chart/templates/deployment.yaml (Nihai Hali)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  # 1. Adımda düzeltilen isimlendirme
   name: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: user-service
+      app: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: user-service
+        app: {{ .Release.Name }}
     spec:
       containers:
         - name: user-service
@@ -21,3 +23,21 @@ spec:
           env:
             - name: DATABASE_URL
               value: {{ .Values.config.databaseUrl }}
+          
+          # --- YENİ EKLENEN SAĞLIK KONTROLLERİ ---
+          readinessProbe:
+            httpGet:
+              path: /  # user_service'in kök endpoint'i
+              port: 8000
+            initialDelaySeconds: 15 # Pod başladıktan 15 sn sonra kontrol et
+            periodSeconds: 10     # Her 10 saniyede bir kontrol et
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 30 # Pod başladıktan 30 sn sonra kontrol et
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
