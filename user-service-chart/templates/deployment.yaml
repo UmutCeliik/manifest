@@ -33,13 +33,6 @@ spec:
             capabilities:
               drop:
                 - "ALL"
-          # --- YENİ EKLENEN BÖLÜM: SERTİFİKA MOUNT'U ---
-          volumeMounts:
-          - name: harbor-ca-vol
-            mountPath: /etc/ssl/certs/harbor.cloudpro.com.tr.crt
-            subPath: harbor.cloudpro.com.tr.crt
-            readOnly: true
-          # --- YENİ BÖLÜM SONU ---
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
