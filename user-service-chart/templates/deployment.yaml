@@ -19,11 +19,6 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
-      # --- YENİ EKLENEN BÖLÜM: SERTİFİKA VOLUME'Ü ---
-      volumes:
-      - name: harbor-ca-vol
-        configMap:
-          name: harbor-ca # Adım 1'de oluşturduğumuz ConfigMap'in adı
       # --- YENİ BÖLÜM SONU ---
       securityContext:
         runAsNonRoot: true
