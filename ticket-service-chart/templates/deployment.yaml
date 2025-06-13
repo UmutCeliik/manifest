@@ -1,9 +1,15 @@
-# ticket-service-chart/templates/deployment.yaml (hostAliases Düzeltilmiş ve Temizlenmiş Son Hali)
+# ticket-service-chart/templates/deployment.yaml (Tüm Düzeltmelerle Nihai Hali)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}
 spec:
+  hostAliases:
+  - ip: "10.77.3.203"
+    hostnames:
+    - "harbor.cloudpro.com.tr"
+    - "vault.cloudpro.com.tr"
+    - "keycloak.cloudpro.com.tr"
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
@@ -13,14 +19,6 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
-      # hostAliases bloğunun doğru yeri burasıdır (pod'un spec'i içi)
-      hostAliases:
-      - ip: "10.77.3.203"
-        hostnames:
-        - "harbor.cloudpro.com.tr"
-        - "vault.cloudpro.com.tr"
-        - "keycloak.cloudpro.com.tr"
-      
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001
@@ -38,22 +36,52 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8000
+          
+          # --- YENİ EKLENEN BÖLÜM: KAYNAK LİMİTLERİ ---
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "150m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+          # --- GÜNCELLENMİŞ BÖLÜM: TÜM ORTAM DEĞİŞKENLERİ ---
           env:
             - name: DATABASE_URL
               value: {{ .Values.config.databaseUrl }}
+            
+            # Keycloak için hassas olmayan değişkenler
+            - name: KEYCLOAK_ISSUER_URI
+              value: "http://keycloak.cloudpro.com.tr/realms/helpdesk-realm"
+            - name: KEYCLOAK_JWKS_URI
+              value: "http://keycloak.cloudpro.com.tr/realms/helpdesk-realm/protocol/openid-connect/certs"
+            - name: KEYCLOAK_TOKEN_AUDIENCE
+              value: "account"
+            - name: KEYCLOAK_ADMIN_CLIENT_ID
+              value: "ticket-service-admin-client"
+
+            # Keycloak için hassas değişken (Secret'tan alınıyor)
+            - name: KEYCLOAK_ADMIN_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ticket-service-secrets 
+                  key: KEYCLOAK_ADMIN_CLIENT_SECRET
+          # --- GÜNCELLEME SONU ---
+
           readinessProbe:
             httpGet:
               path: /
               port: 8000
-            initialDelaySeconds: 15
-            periodSeconds: 10
+            initialDelaySeconds: 20 # Başlangıç için biraz daha zaman tanıyalım
+            periodSeconds: 15
             timeoutSeconds: 5
             failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /
               port: 8000
-            initialDelaySeconds: 30
+            initialDelaySeconds: 40 # Başlangıç için biraz daha zaman tanıyalım
             periodSeconds: 20
             timeoutSeconds: 5
             failureThreshold: 3
