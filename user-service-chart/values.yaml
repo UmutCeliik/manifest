@@ -13,4 +13,9 @@ service:
 config:
   # Bu URL, user_service'in, docker-compose'daki gibi user-db servisine erişmesini sağlar.
   # Veritabanı adı, kullanıcı adı ve şifrenin docker-compose'daki ile aynı olduğunu varsayıyoruz.
-  databaseUrl: "postgresql://user_admin:Passw0rd12.@user-db-postgresql:5432/user_db"
+  databaseUrl: "postgresql://user_admin:Passw0rd12.@10.43.196.46:5432/user_db"
+extraEnvVars:
+  - name: VAULT_ADDR
+    value: "https://10.77.3.203:443" # vault.cloudpro.com.tr yerine IP
+  - name: KEYCLOAK_ISSUER_URI
+    value: "http://10.77.3.203/realms/helpdesk-realm"
