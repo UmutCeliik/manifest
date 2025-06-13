@@ -13,4 +13,4 @@ service:
 config:
   # Bu URL, user_service'in, docker-compose'daki gibi user-db servisine erişmesini sağlar.
   # Veritabanı adı, kullanıcı adı ve şifrenin docker-compose'daki ile aynı olduğunu varsayıyoruz.
-  databaseUrl: "postgresql://user_admin:Passw0rd12.@user-db:5432/user_db"
+  databaseUrl: "postgresql://user_admin:Passw0rd12.@user-db-postgresql:5432/user_db"

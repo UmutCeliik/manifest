@@ -8,6 +8,8 @@ spec:
   - ip: "10.77.3.203"
     hostnames:
     - "harbor.cloudpro.com.tr"
+    - "vault.cloudpro.com.tr" 
+    - "keycloak.cloudpro.com.tr"
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
