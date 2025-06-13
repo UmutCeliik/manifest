@@ -1,0 +1,16 @@
+replicaCount: 1
+
+image:
+  repository: harbor.cloudpro.com.tr/helpdesk/user_service
+  pullPolicy: IfNotPresent
+  # Bu etiket, CI pipeline'ı tarafından otomatik olarak güncellenecek!
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 80
+
+config:
+  # Bu URL, user_service'in, docker-compose'daki gibi user-db servisine erişmesini sağlar.
+  # Veritabanı adı, kullanıcı adı ve şifrenin docker-compose'daki ile aynı olduğunu varsayıyoruz.
+  databaseUrl: "postgresql://user_admin:Passw0rd12.@user-db:5432/user_db"
