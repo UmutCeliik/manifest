@@ -12,13 +12,13 @@ metadata:
     argocd-image-updater.argoproj.io/image-list: userservicealias=harbor.cloudpro.com.tr/helpdesk/user_service
 
     # 2. En yeni imajı al (BuildID'ler için ideal).
-    argocd-image-updater.argoproj.io/userservicealias.update-strategy: latest
+    argocd-image-updater.argoproj.io/userservicealias.update-strategy: newest-build
 
     # 3. Helm'in values.yaml dosyasındaki 'image.tag' alanını güncelle.
     argocd-image-updater.argoproj.io/userservicealias.helm.image-spec: image.tag
 
     # 4. Harbor'a bağlanmak için Adım 2.3'te oluşturulan 'harbor-creds' secret'ını kullan.
-    argocd-image-updater.argoproj.io/userservicealias.pull-secret: secret:argocd/harbor-creds#
+    argocd-image-updater.argocroj.io/ticketservicealias.pull-secret: secret:argocd/harbor-creds 
 
     # 5. Git'e commit atmak için Adım 2.4'te oluşturulan 'git-creds' secret'ını kullan.
     argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
