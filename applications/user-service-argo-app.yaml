@@ -1,0 +1,49 @@
+# user-service-argo-app.yaml
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: user-service
+  namespace: argocd
+  annotations:
+    # --- IMAGE UPDATER ANNOTATIONS (SİZE ÖZEL AYARLANDI) ---
+    
+    # 1. Harbor'daki user_service imajını izle.
+    argocd-image-updater.argoproj.io/image-list: userservicealias=harbor.cloudpro.com.tr/helpdesk/user_service
+
+    # 2. En yeni imajı al (BuildID'ler için ideal).
+    argocd-image-updater.argoproj.io/userservicealias.update-strategy: latest
+
+    # 3. Helm'in values.yaml dosyasındaki 'image.tag' alanını güncelle.
+    argocd-image-updater.argoproj.io/userservicealias.helm.image-spec: image.tag
+
+    # 4. Harbor'a bağlanmak için Adım 2.3'te oluşturulan 'harbor-creds' secret'ını kullan.
+    argocd-image-updater.argoproj.io/userservicealias.pull-secret: secret:argocd/harbor-creds#
+
+    # 5. Git'e commit atmak için Adım 2.4'te oluşturulan 'git-creds' secret'ını kullan.
+    argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
+    
+    # 6. 'main' branch'ine commit at.
+    argocd-image-updater.argoproj.io/git-branch: main
+
+spec:
+  project: default
+  source:
+    # ArgoCD'nin izleyeceği GitOps reponuzun adresi
+    repoURL: 'https://dev.azure.com/umutcelik0234/HelpDesk_App/_git/helpdesk-gitops-manifests'
+    # Bu repo içinde hangi Helm Chart klasörünü kullanacağı
+    path: user-service-chart
+    targetRevision: main
+    helm:
+      valueFiles:
+      - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    # Uygulamanın deploy edileceği namespace
+    namespace: helpdesk-app
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

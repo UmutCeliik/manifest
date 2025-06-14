@@ -1,0 +1,23 @@
+# root-app.yaml
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://dev.azure.com/umutcelik0234/HelpDesk_App/_git/helpdesk-gitops-manifests'
+    # 'applications' klasörünü izle
+    path: applications 
+    targetRevision: main
+  destination:
+    server: https://kubernetes.default.svc
+    # Bu uygulamanın kendisi bir şey deploy etmediği için namespace önemli değil,
+    # ama genellikle argocd namespace'i kullanılır.
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

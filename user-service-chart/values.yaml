@@ -4,7 +4,7 @@ image:
   repository: harbor.cloudpro.com.tr/helpdesk/user_service
   pullPolicy: IfNotPresent
   # Bu etiket, CI pipeline'ı tarafından otomatik olarak güncellenecek!
-  tag: "104"
+  tag: "114"
 
 service:
   type: ClusterIP
