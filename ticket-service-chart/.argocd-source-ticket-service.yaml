@@ -1,5 +1,8 @@
 helm:
   parameters:
   - name: image.tag
-    value: harbor.cloudpro.com.tr/helpdesk/ticket_service:116
+    value: "117"
+    forcestring: true
+  - name: image.name
+    value: harbor.cloudpro.com.tr/helpdesk/ticket_service
     forcestring: true
