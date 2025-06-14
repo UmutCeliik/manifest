@@ -1,0 +1,5 @@
+helm:
+  parameters:
+  - name: image.tag
+    value: harbor.cloudpro.com.tr/helpdesk/ticket_service:116
+    forcestring: true
