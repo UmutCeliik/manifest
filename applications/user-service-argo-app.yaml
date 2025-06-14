@@ -7,21 +7,11 @@ metadata:
   namespace: argocd
   annotations:
     argocd-image-updater.argoproj.io/image-list: userservicealias=harbor.cloudpro.com.tr/helpdesk/user_service
-
-    # 2. En yeni imajı al (Güncellendi)
     argocd-image-updater.argoproj.io/userservicealias.update-strategy: newest-build
-
-    # 3. Güncellenecek Helm değeri
-    argocd-image-updater.argoproj.io/userservicealias.helm.image-spec: image.tag
-
-    # 4. Harbor kimlik bilgileri (Sondaki # kaldırıldı)
-    argocd-image-updater.argoproj.io/userservicealias.pull-secret: secret:argocd/harbor-creds
-
-    # 6. Git'e yazma metodu
     argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
-    
-    # 7. Commit atılacak branch
     argocd-image-updater.argoproj.io/git-branch: main
+    argocd-image-updater.argoproj.io/userservicealias.helm.image-name: image.repository
+    argocd-image-updater.argoproj.io/userservicealias.helm.image-tag: image.tag
 
 spec:
   project: default
