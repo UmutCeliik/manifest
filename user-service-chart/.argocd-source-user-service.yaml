@@ -1,0 +1,8 @@
+helm:
+  parameters:
+  - name: image.repository
+    value: harbor.cloudpro.com.tr/helpdesk/user_service
+    forcestring: true
+  - name: image.tag
+    value: "116"
+    forcestring: true
