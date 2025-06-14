@@ -2,14 +2,13 @@
 replicaCount: 1
 
 image:
-  repository: harbor.cloudpro.com.tr/helpdesk/ticket_service # Depo adını güncelledik
+  repository: harbor.cloudpro.com.tr/helpdesk/ticket_service
   pullPolicy: IfNotPresent
-  tag: "114" # Harbor'daki geçerli bir ticket_service etiketi
+  tag: "" #
 
 service:
   type: ClusterIP
   port: 80
 
 config:
-  # Veritabanı adını ve servis adını güncelledik
   databaseUrl: "postgresql://ticket_admin:Passw0rd12.@10.43.43.21:5432/ticket_db"
