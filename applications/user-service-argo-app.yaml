@@ -17,9 +17,6 @@ metadata:
     # 4. Harbor kimlik bilgileri (Sondaki # kaldırıldı)
     argocd-image-updater.argoproj.io/userservicealias.pull-secret: secret:argocd/harbor-creds
 
-    # 5. YENİ EKLENEN ANNOTATION: TLS doğrulamasını atla
-    argocd-image-updater.argoproj.io/userservicealias.insecure-skip-verify: "true"
-
     # 6. Git'e yazma metodu
     argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
     
