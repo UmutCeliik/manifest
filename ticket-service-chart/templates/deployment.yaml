@@ -16,6 +16,12 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
+      hostAliases:
+      - ip: "10.77.3.203"
+        hostnames:
+        - "harbor.cloudpro.com.tr"
+        - "vault.cloudpro.com.tr"
+        - "keycloak.cloudpro.com.tr"
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001

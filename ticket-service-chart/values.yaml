@@ -12,14 +12,6 @@ service:
   type: ClusterIP
   port: 80
 
-# Pod'un ihtiyaç duyduğu DNS yönlendirmeleri
-hostAliases:
-  - ip: "10.77.3.203"
-    hostnames:
-    - "harbor.cloudpro.com.tr"
-    - "vault.cloudpro.com.tr"
-    - "keycloak.cloudpro.com.tr"
-
 # Pod'a doğrudan verilecek ortam değişkenleri
 env:
   - name: DATABASE_URL
