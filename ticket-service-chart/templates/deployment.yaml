@@ -4,12 +4,9 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}
 spec:
+  # hostAliases artık values.yaml dosyasından geliyor.
   hostAliases:
-  - ip: "10.77.3.203"
-    hostnames:
-    - "harbor.cloudpro.com.tr"
-    - "vault.cloudpro.com.tr"
-    - "keycloak.cloudpro.com.tr"
+    {{- toYaml .Values.hostAliases | nindent 4 }}
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
@@ -43,30 +40,30 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
+          # --- YENİ VE EN TEMİZ YÖNTEM ---
+          # env bloğu artık çok daha sade.
           env:
-            - name: DATABASE_URL
-              value: {{ .Values.config.databaseUrl }}
+            # values.yaml'daki 'env' listesindeki her bir elemanı buraya ekler.
+            {{- range .Values.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
             
-            - name: KEYCLOAK_ISSUER_URI
-              value: "http://keycloak.cloudpro.com.tr/realms/helpdesk-realm"
-            - name: KEYCLOAK_JWKS_URI
-              value: "http://keycloak.cloudpro.com.tr/realms/helpdesk-realm/protocol/openid-connect/certs"
-            - name: KEYCLOAK_TOKEN_AUDIENCE
-              value: "account"
-            - name: KEYCLOAK_ADMIN_CLIENT_ID
-              value: "ticket-service-admin-client"
-
-            - name: KEYCLOAK_ADMIN_CLIENT_SECRET
+            # values.yaml'daki 'envFromSecret' listesindeki her bir elemanı
+            # Kubernetes Secret'ından alacak şekilde buraya ekler.
+            {{- range .Values.envFromSecret }}
+            - name: {{ .name }}
               valueFrom:
                 secretKeyRef:
-                  name: ticket-service-secrets 
-                  key: KEYCLOAK_ADMIN_CLIENT_SECRET
+                  name: {{ .secretName }}
+                  key: {{ .secretKey }}
+            {{- end }}
 
           readinessProbe:
             httpGet:
               path: /healthz
               port: 8000
-            initialDelaySeconds: 30 # Başlangıç için biraz daha zaman tanıyalım
+            initialDelaySeconds: 30
             periodSeconds: 15
             timeoutSeconds: 5
             failureThreshold: 3
@@ -74,7 +71,7 @@ spec:
             httpGet:
               path: /healthz
               port: 8000
-            initialDelaySeconds: 60 # Başlangıç için biraz daha zaman tanıyalım
+            initialDelaySeconds: 60
             periodSeconds: 20
             timeoutSeconds: 5
             failureThreshold: 3

@@ -12,3 +12,33 @@ service:
 
 config:
   databaseUrl: "postgresql://ticket_admin:Passw0rd12.@10.43.43.21:5432/ticket_db"
+
+hostAliases:
+  - ip: "10.77.3.203"
+    hostnames:
+    - "harbor.cloudpro.com.tr"
+    - "vault.cloudpro.com.tr"
+    - "keycloak.cloudpro.com.tr"
+
+env:
+  # Ortama göre değişebilecek değerler
+  - name: DATABASE_URL
+    value: "postgresql://ticket_admin:Passw0rd12.@10.43.43.21:5432/ticket_db"
+  - name: VAULT_ADDR
+    value: "https://10.77.3.203:443"
+  - name: KEYCLOAK_ISSUER_URI
+    value: "http://10.77.3.203/realms/helpdesk-realm"
+  - name: KEYCLOAK_JWKS_URI
+    value: "http://10.77.3.203/realms/helpdesk-realm/protocol/openid-connect/certs"
+
+  # Genellikle sabit kalan değerler
+  - name: KEYCLOAK_TOKEN_AUDIENCE
+    value: "account"
+  - name: KEYCLOAK_ADMIN_CLIENT_ID
+    value: "ticket-service-admin-client"
+
+# Kubernetes Secret'larından alınacak ortam değişkenleri.
+envFromSecret:
+  - name: KEYCLOAK_ADMIN_CLIENT_SECRET
+    secretName: ticket-service-secrets
+    secretKey: KEYCLOAK_ADMIN_CLIENT_SECRET
