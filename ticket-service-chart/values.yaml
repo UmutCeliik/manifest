@@ -25,7 +25,7 @@ env:
   - name: DATABASE_URL
     value: "postgresql://ticket_admin:Passw0rd12.@10.43.43.21:5432/ticket_db" # Her servis için kendi DB adresini yazın
   - name: VAULT_ADDR
-    value: "https://10.77.3.203:443" # HTTPS olmadan ve portsuz deneyebiliriz: "http://10.77.3.203:8200"
+    value: "https://vault.cloudpro.com.tr/" # HTTPS olmadan ve portsuz deneyebiliriz: "http://10.77.3.203:8200"
   - name: KEYCLOAK_ISSUER_URI
     value: "http://10.77.3.203/realms/helpdesk-realm"
   - name: KEYCLOAK_JWKS_URI
