@@ -1,18 +1,18 @@
 # ticket-service-chart/values.yaml
+# BU YAPI HEM TICKET HEM DE USER SERVISI IÇIN KULLANILACAKTIR.
+
 replicaCount: 1
 
 image:
-  repository: harbor.cloudpro.com.tr/helpdesk/ticket_service
+  repository: harbor.cloudpro.com.tr/helpdesk/ticket_service # user-service için burayı güncelleyin
   pullPolicy: IfNotPresent
-  tag: "" #
+  tag: "117"
 
 service:
   type: ClusterIP
   port: 80
 
-config:
-  databaseUrl: "postgresql://ticket_admin:Passw0rd12.@10.43.43.21:5432/ticket_db"
-
+# Pod'un ihtiyaç duyduğu DNS yönlendirmeleri
 hostAliases:
   - ip: "10.77.3.203"
     hostnames:
@@ -20,25 +20,27 @@ hostAliases:
     - "vault.cloudpro.com.tr"
     - "keycloak.cloudpro.com.tr"
 
+# Pod'a doğrudan verilecek ortam değişkenleri
 env:
-  # Ortama göre değişebilecek değerler
   - name: DATABASE_URL
-    value: "postgresql://ticket_admin:Passw0rd12.@10.43.43.21:5432/ticket_db"
+    value: "postgresql://ticket_admin:Passw0rd12.@10.43.43.21:5432/ticket_db" # Her servis için kendi DB adresini yazın
   - name: VAULT_ADDR
-    value: "https://10.77.3.203:443"
+    value: "https://10.77.3.203" # HTTPS olmadan ve portsuz deneyebiliriz: "http://10.77.3.203:8200"
   - name: KEYCLOAK_ISSUER_URI
     value: "http://10.77.3.203/realms/helpdesk-realm"
   - name: KEYCLOAK_JWKS_URI
     value: "http://10.77.3.203/realms/helpdesk-realm/protocol/openid-connect/certs"
-
-  # Genellikle sabit kalan değerler
   - name: KEYCLOAK_TOKEN_AUDIENCE
     value: "account"
   - name: KEYCLOAK_ADMIN_CLIENT_ID
-    value: "ticket-service-admin-client"
+    value: "ticket-service-admin-client" # user-service için kendi client ID'si
 
-# Kubernetes Secret'larından alınacak ortam değişkenleri.
+# Kubernetes Secret'larından alınacak ortam değişkenleri
 envFromSecret:
   - name: KEYCLOAK_ADMIN_CLIENT_SECRET
-    secretName: ticket-service-secrets
+    secretName: ticket-service-secrets # Her servis için kendi secret adı
     secretKey: KEYCLOAK_ADMIN_CLIENT_SECRET
+  # --- YENİ EKLENEN BÖLÜM ---
+  - name: VAULT_TOKEN
+    secretName: vault-token-secret # Adım 1'de oluşturduğumuz secret'ın adı
+    secretKey: VAULT_TOKEN
