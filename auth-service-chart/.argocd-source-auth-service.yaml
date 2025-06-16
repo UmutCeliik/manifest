@@ -4,5 +4,5 @@ helm:
     value: harbor.cloudpro.com.tr/helpdesk/auth_service
     forcestring: true
   - name: image.tag
-    value: "117"
+    value: "120"
     forcestring: true
