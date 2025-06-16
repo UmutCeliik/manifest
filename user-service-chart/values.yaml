@@ -13,6 +13,6 @@ config:
   databaseUrl: "postgresql://user_admin:Passw0rd12.@10.43.169.88:5432/user_db"
 extraEnvVars:
   - name: VAULT_ADDR
-    value: "https://10.77.3.203:443"
+    value: "https://vault.cloudpro.com.tr"
   - name: KEYCLOAK_ISSUER_URI
-    value: "http://10.77.3.203/realms/helpdesk-realm"
+    value: "https://keycloak.cloudpro.com.tr/realms/helpdesk-realm"

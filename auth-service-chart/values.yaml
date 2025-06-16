@@ -21,12 +21,12 @@ env:
   - name: KEYCLOAK_CLIENT_ID
     value: "helpdesk-backend-api"
   - name: FRONTEND_REDIRECT_URI
-    value: "http://localhost:5173/auth/callback" # Frontend'in doğru URL'i ile değiştirin
+    value: "https://helpdesk.cloudpro.com.tr/auth/callback" # Frontend'in doğru URL'i ile değiştirin
   # auth_service/config.py tarafından beklenen diğer Keycloak ortam değişkenleri
   - name: KEYCLOAK_ISSUER_URI
-    value: "http://keycloak.cloudpro.com.tr/realms/helpdesk-realm" # Ortamınıza göre güncelleyin
+    value: "https://keycloak.cloudpro.com.tr/realms/helpdesk-realm" # Ortamınıza göre güncelleyin
   - name: KEYCLOAK_JWKS_URI
-    value: "http://keycloak.cloudpro.com.tr/realms/helpdesk-realm/protocol/openid-connect/certs" # Ortamınıza göre güncelleyin
+    value: "https://keycloak.cloudpro.com.tr/realms/helpdesk-realm/protocol/openid-connect/certs" # Ortamınıza göre güncelleyin
 
 # Kubernetes Secret'larından alınacak ortam değişkenleri
 envFromSecret:

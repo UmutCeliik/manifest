@@ -18,9 +18,9 @@ env:
   - name: VAULT_ADDR
     value: "https://vault.cloudpro.com.tr/"
   - name: KEYCLOAK_ISSUER_URI
-    value: "http://10.77.3.203/realms/helpdesk-realm"
+    value: "https://keycloak.cloudpro.com.tr/realms/helpdesk-realm"
   - name: KEYCLOAK_JWKS_URI
-    value: "http://10.77.3.203/realms/helpdesk-realm/protocol/openid-connect/certs"
+    value: "https://keycloak.cloudpro.com.tr/realms/helpdesk-realm/protocol/openid-connect/certs"
   - name: KEYCLOAK_TOKEN_AUDIENCE
     value: "account"
   - name: KEYCLOAK_ADMIN_CLIENT_ID

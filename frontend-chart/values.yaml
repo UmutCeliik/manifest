@@ -20,7 +20,7 @@ service:
 # Nginx config'inde sabitlenmiş olabilir.
 env:
   - name: VITE_KEYCLOAK_URL
-    value: "http://keycloak.cloudpro.com.tr" # Frontend'in Keycloak sunucusu
+    value: "https://keycloak.cloudpro.com.tr" # Frontend'in Keycloak sunucusu
   - name: VITE_KEYCLOAK_REALM
     value: "helpdesk-realm"
   - name: VITE_KEYCLOAK_CLIENT_ID
