@@ -28,11 +28,11 @@ env:
   # Diğer backend servislerinin URL'leri (örn: ticket_service, user_service, auth_service)
   # Bu URL'ler genellikle Ingress üzerinden erişilebilir olmalıdır.
   - name: VITE_AUTH_SERVICE_URL
-    value: "http://auth-service.helpdesk-app.svc.cluster.local:8002" # Cluster içi servis adı
+    value: "/api/auth"
   - name: VITE_USER_SERVICE_URL
-    value: "http://user-service.helpdesk-app.svc.cluster.local:8001" # Cluster içi servis adı
+    value: "/api/users"
   - name: VITE_TICKET_SERVICE_URL
-    value: "http://ticket-service.helpdesk-app.svc.cluster.local:8000" # Cluster içi servis adı
+    value: "/api/tickets"
 
 
 resources:
