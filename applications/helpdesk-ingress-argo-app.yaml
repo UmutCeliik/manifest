@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: helpdesk-ingress
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://dev.azure.com/umutcelik0234/HelpDesk_App/_git/helpdesk-gitops-manifests'
+    path: ingress # Ingress dosyasının bulunduğu path
+    targetRevision: main
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: helpdesk-app # Ingress'in deploy edileceği namespace (uygulamaların namespace'i ile aynı)
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
