@@ -1,0 +1,32 @@
+# frontend-argo-app.yaml
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: frontend
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: frontendaslias=harbor.cloudpro.com.tr/helpdesk/frontend
+    argocd-image-updater.argoproj.io/frontendaslias.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
+    argocd-image-updater.argoproj.io/git-branch: main
+    argocd-image-updater.argoproj.io/frontendaslias.helm.image-tag: image.tag
+
+spec:
+  project: default
+  source:
+    repoURL: 'https://dev.azure.com/umutcelik0234/HelpDesk_App/_git/helpdesk-gitops-manifests'
+    path: frontend-chart
+    targetRevision: main
+    helm:
+      valueFiles:
+      - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: helpdesk-app # Uygulamaların deploy edileceği namespace
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

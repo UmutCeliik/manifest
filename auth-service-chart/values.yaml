@@ -1,0 +1,76 @@
+# auth-service-chart/values.yaml
+
+replicaCount: 1
+
+image:
+  repository: harbor.cloudpro.com.tr/helpdesk/auth_service
+  pullPolicy: IfNotPresent
+  tag: "" # CI/CD pipeline'ı tarafından otomatik olarak güncellenecek
+
+service:
+  type: ClusterIP
+  port: 80 # Servisin dışarıya açılacağı port
+  targetPort: 8000 # Kapsayıcı içindeki uygulamanın çalıştığı port
+
+# Ortam değişkenleri doğrudan pod'a enjekte edilecek
+env:
+  - name: VAULT_ADDR
+    value: "https://vault.cloudpro.com.tr/"
+  - name: KEYCLOAK_REALM_NAME
+    value: "helpdesk-realm"
+  - name: KEYCLOAK_CLIENT_ID
+    value: "helpdesk-backend-api"
+  - name: FRONTEND_REDIRECT_URI
+    value: "http://localhost:5173/auth/callback" # Frontend'in doğru URL'i ile değiştirin
+  # auth_service/config.py tarafından beklenen diğer Keycloak ortam değişkenleri
+  - name: KEYCLOAK_ISSUER_URI
+    value: "http://keycloak.cloudpro.com.tr/realms/helpdesk-realm" # Ortamınıza göre güncelleyin
+  - name: KEYCLOAK_JWKS_URI
+    value: "http://keycloak.cloudpro.com.tr/realms/helpdesk-realm/protocol/openid-connect/certs" # Ortamınıza göre güncelleyin
+
+# Kubernetes Secret'larından alınacak ortam değişkenleri
+envFromSecret:
+  - name: VAULT_TOKEN
+    secretName: vault-token-secret # Daha önce oluşturduğunuz Vault token secret'ı
+    secretKey: VAULT_TOKEN
+  - name: VAULT_KEYCLOAK_CLIENT_SECRET_PATH
+    secretName: keycloak-secrets # Keycloak client secret'ını içeren secret
+    secretKey: VAULT_KEYCLOAK_CLIENT_SECRET_PATH # Bu key'i Keycloak Secret'ınızdaki gerçek path ile eşleştirin
+  - name: VAULT_KEYCLOAK_OIDC_CONFIG_PATH
+    secretName: keycloak-secrets # Keycloak OIDC config'ini içeren secret
+    secretKey: VAULT_KEYCLOAK_OIDC_CONFIG_PATH # Bu key'i Keycloak Secret'ınızdaki gerçek path ile eşleştirin
+
+# Pod'a eklenecek hostAliases (IP adreslerini etki alanı adlarıyla eşleştirmek için)
+hostAliases:
+  - ip: "10.77.3.203" # Ortamınıza göre bu IP adresini güncelleyin
+    hostnames:
+      - "harbor.cloudpro.com.tr"
+      - "vault.cloudpro.com.tr"
+      - "keycloak.cloudpro.com.tr"
+      - "argo.cloudpro.com.tr"
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "150m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+# Sağlık kontrolleri
+readinessProbe:
+  httpGet:
+    path: /healthz # Auth servisinizde bir sağlık kontrolü endpoint'i olduğunu varsayıyorum
+    port: 8000
+  initialDelaySeconds: 30
+  periodSeconds: 15
+  timeoutSeconds: 5
+  failureThreshold: 3
+livenessProbe:
+  httpGet:
+    path: /healthz # Auth servisinizde bir sağlık kontrolü endpoint'i olduğunu varsayıyorum
+    port: 8000
+  initialDelaySeconds: 60
+  periodSeconds: 20
+  timeoutSeconds: 5
+  failureThreshold: 3

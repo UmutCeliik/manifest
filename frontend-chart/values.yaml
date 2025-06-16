@@ -1,0 +1,44 @@
+# frontend-chart/values.yaml
+
+replicaCount: 1
+
+image:
+  repository: harbor.cloudpro.com.tr/helpdesk/frontend
+  pullPolicy: IfNotPresent
+  tag: "" # CI/CD pipeline'ı tarafından otomatik olarak güncellenecek
+
+service:
+  type: ClusterIP # Genellikle bir Ingress arkasına koyulduğu için ClusterIP yeterlidir
+  port: 80 # Servisin dışarıya açılacağı port
+  targetPort: 80 # Nginx'in çalıştığı port
+
+# Frontend'in ihtiyaç duyduğu ortam değişkenleri veya Nginx config için placeholderlar
+# Not: Frontend Dockerfile'ı Nginx kullanıyor ve Vite'ın build çıktısını sunuyor.
+# Eğer frontend runtime'da ortam değişkenlerine ihtiyaç duyuyorsa (örn: API_BASE_URL, KEYCLOAK_URL),
+# bu değerlerin Nginx config'ine veya JS dosyalarına nasıl enjekte edileceği planlanmalıdır.
+# Şimdilik, Keycloak URL'leri ve diğer sabit URL'ler doğrudan Vue kodu içinde veya
+# Nginx config'inde sabitlenmiş olabilir.
+env:
+  - name: VITE_KEYCLOAK_URL
+    value: "http://keycloak.cloudpro.com.tr" # Frontend'in Keycloak sunucusu
+  - name: VITE_KEYCLOAK_REALM
+    value: "helpdesk-realm"
+  - name: VITE_KEYCLOAK_CLIENT_ID
+    value: "helpdesk-frontend"
+  # Diğer backend servislerinin URL'leri (örn: ticket_service, user_service, auth_service)
+  # Bu URL'ler genellikle Ingress üzerinden erişilebilir olmalıdır.
+  - name: VITE_AUTH_SERVICE_URL
+    value: "http://auth-service.helpdesk-app.svc.cluster.local:8002" # Cluster içi servis adı
+  - name: VITE_USER_SERVICE_URL
+    value: "http://user-service.helpdesk-app.svc.cluster.local:8001" # Cluster içi servis adı
+  - name: VITE_TICKET_SERVICE_URL
+    value: "http://ticket-service.helpdesk-app.svc.cluster.local:8000" # Cluster içi servis adı
+
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+  limits:
+    memory: "256Mi"
+    cpu: "200m"

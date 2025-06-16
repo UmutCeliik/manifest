@@ -4,7 +4,6 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}
 spec:
-  # hostAliases artık values.yaml dosyasından geliyor.
   hostAliases:
     {{- toYaml .Values.hostAliases | nindent 4 }}
   replicas: {{ .Values.replicaCount }}
@@ -46,8 +45,7 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
-          # --- YENİ VE EN TEMİZ YÖNTEM ---
-          # env bloğu artık çok daha sade.
+
           env:
             # values.yaml'daki 'env' listesindeki her bir elemanı buraya ekler.
             {{- range .Values.env }}

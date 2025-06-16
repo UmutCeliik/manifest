@@ -1,0 +1,32 @@
+# auth-service-argo-app.yaml
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: auth-service
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: authservicealias=harbor.cloudpro.com.tr/helpdesk/auth_service
+    argocd-image-updater.argoproj.io/authservicealias.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
+    argocd-image-updater.argoproj.io/git-branch: main
+    argocd-image-updater.argoproj.io/authservicealias.helm.image-tag: image.tag
+
+spec:
+  project: default
+  source:
+    repoURL: 'https://dev.azure.com/umutcelik0234/HelpDesk_App/_git/helpdesk-gitops-manifests'
+    path: auth-service-chart
+    targetRevision: main
+    helm:
+      valueFiles:
+      - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: helpdesk-app # Uygulamaların deploy edileceği namespace
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
