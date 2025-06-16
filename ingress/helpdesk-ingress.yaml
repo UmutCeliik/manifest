@@ -1,4 +1,4 @@
-# ingress/helpdesk-ingress.yaml (Düzeltilmiş Hali)
+# ingress/helpdesk-ingress.yaml (TLS Aktifleştirilmiş Son Hali)
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -6,10 +6,16 @@ metadata:
   name: helpdesk-ingress
   namespace: helpdesk-app
   annotations:
-    # Bu anotasyon, NGINX Ingress Controller'ı kullandığınızı belirtir.
     kubernetes.io/ingress.class: "nginx"
-    # GEREKSİZ anotasyonlar kaldırıldı. Regex veya rewrite'a bu senaryoda ihtiyaç yok.
+    # YENİ EKLENEN ANOTASYON: Gelen tüm HTTP isteklerini HTTPS'e zorla.
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
+  # YENİ EKLENEN BÖLÜM: TLS yapılandırması
+  tls:
+  - hosts:
+    - helpdesk.cloudpro.com.tr
+    # Az önce oluşturduğumuz secret'ın adını veriyoruz.
+    secretName: helpdesk-tls-secret
   rules:
   - host: helpdesk.cloudpro.com.tr
     http:
@@ -18,10 +24,8 @@ spec:
         pathType: Prefix
         backend:
           service:
-            # Frontend servisi doğru şekilde hedefleniyor.
             name: frontend
             port:
-              # Frontend servisinin portu 80.
               number: 80
       - path: /api/auth
         pathType: Prefix
@@ -29,7 +33,6 @@ spec:
           service:
             name: auth-service
             port:
-              # auth-service'in Service portu 80.
               number: 80
       - path: /api/users
         pathType: Prefix
@@ -37,7 +40,6 @@ spec:
           service:
             name: user-service
             port:
-              # user-service'in Service portu 80.
               number: 80
       - path: /api/tickets
         pathType: Prefix
@@ -45,5 +47,4 @@ spec:
           service:
             name: ticket-service
             port:
-              # ticket-service'in Service portu 80.
               number: 80
