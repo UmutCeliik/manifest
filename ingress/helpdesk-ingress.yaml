@@ -6,9 +6,8 @@ metadata:
   annotations:
     # Nginx Ingress Controller için anotasyonlar
     kubernetes.io/ingress.class: nginx # Kullanılan Ingress sınıfı
-    nginx.ingress.kubernetes.io/rewrite-target: /$2 # Path rewrite için, eğer path kullanılıyorsa
     nginx.ingress.kubernetes.io/proxy-body-size: "10m" # Genel body boyutu limiti
-    nginx.ingress.kubernetes.io/ssl-redirect: "false" # HTTP'den HTTPS'e otomatik yönlendirmeyi devre dışı bırakır
+    nginx.ingress.kubernetes.io/ssl-redirect: "true" # HTTP'den HTTPS'e otomatik yönlendirmeyi devre dışı bırakır
     # Eğer isterseniz, frontend'den backend'e giden isteklerde backend protokolünü HTTP olarak belirtmek için:
     # nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
