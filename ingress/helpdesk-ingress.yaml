@@ -1,0 +1,51 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: helpdesk-ingress
+  namespace: helpdesk-app # Uygulamaların çalıştığı namespace
+  annotations:
+    # Nginx Ingress Controller için anotasyonlar
+    kubernetes.io/ingress.class: nginx # Kullanılan Ingress sınıfı
+    nginx.ingress.kubernetes.io/rewrite-target: /$2 # Path rewrite için, eğer path kullanılıyorsa
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m" # Genel body boyutu limiti
+    nginx.ingress.kubernetes.io/ssl-redirect: "false" # HTTP'den HTTPS'e otomatik yönlendirmeyi devre dışı bırakır
+    # Eğer isterseniz, frontend'den backend'e giden isteklerde backend protokolünü HTTP olarak belirtmek için:
+    # nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+spec:
+  ingressClassName: nginx # kubectl get ingressclass çıktısından aldığımız sınıf adı
+  rules:
+  - host: helpdesk.cloudpro.com.tr # Uygulamanız için kullanacağınız alan adı
+    http:
+      paths:
+      # Frontend servisi için kök yol
+      - path: /(.*) # Herhangi bir path için frontend'e yönlendir
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend # Frontend servisi Service adı
+            port:
+              number: 80 # Frontend servisi Helm chart'ındaki service.port
+      # Auth servisi için yol (örn: helpdesk.cloudpro.com.tr/auth/login)
+      - path: /auth(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: auth-service # Auth servisi Service adı
+            port:
+              number: 80 # Auth servisi Helm chart'ındaki service.port
+      # User servisi için yol (örn: helpdesk.cloudpro.com.tr/users/me)
+      - path: /users(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: user-service # User servisi Service adı
+            port:
+              number: 80 # User servisi Helm chart'ındaki service.port
+      # Ticket servisi için yol (örn: helpdesk.cloudpro.com.tr/tickets/123)
+      - path: /tickets(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: ticket-service # Ticket servisi Service adı
+            port:
+              number: 80 # Ticket servisi Helm chart'ındaki service.port
