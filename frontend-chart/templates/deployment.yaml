@@ -39,7 +39,7 @@ spec:
             {{- end }}
           readinessProbe:
             httpGet:
-              path: /
+              path: /healthz # <-- Prop yolunu /healthz olarak değiştirin
               port: {{ .Values.service.targetPort }}
             initialDelaySeconds: 5
             periodSeconds: 10
@@ -47,7 +47,7 @@ spec:
             failureThreshold: 3
           livenessProbe:
             httpGet:
-              path: /
+              path: /healthz # <-- Prop yolunu /healthz olarak değiştirin
               port: {{ .Values.service.targetPort }}
             initialDelaySeconds: 10
             periodSeconds: 15
