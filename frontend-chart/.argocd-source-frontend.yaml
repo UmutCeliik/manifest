@@ -4,5 +4,5 @@ helm:
     value: harbor.cloudpro.com.tr/helpdesk/frontend
     forcestring: true
   - name: image.tag
-    value: "136"
+    value: "137"
     forcestring: true
