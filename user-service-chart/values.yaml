@@ -9,10 +9,28 @@ service:
   type: ClusterIP
   port: 80
 
+# config bölümünü bu şekilde bırakıyoruz.
 config:
   databaseUrl: "postgresql://user_admin:Passw0rd12.@10.43.169.88:5432/user_db"
+
+# Ortam değişkenlerinin doğru ve tutarlı olduğundan emin oluyoruz.
 extraEnvVars:
+  # Vault adresi DNS adı ile
   - name: VAULT_ADDR
     value: "https://vault.cloudpro.com.tr"
+    
+  # Keycloak Issuer URI'si HTTPS ve DNS adı ile
   - name: KEYCLOAK_ISSUER_URI
     value: "https://keycloak.cloudpro.com.tr/realms/helpdesk-realm"
+    
+  # Keycloak JWKS URI'si HTTPS ve DNS adı ile
+  - name: KEYCLOAK_JWKS_URI
+    value: "https://keycloak.cloudpro.com.tr/realms/helpdesk-realm/protocol/openid-connect/certs"
+
+  # Audience, frontend istemcisinin adıyla eşleşmeli
+  - name: KEYCLOAK_TOKEN_AUDIENCE
+    value: "helpdesk-frontend"
+
+  # Admin Client ayarları (varsa)
+  - name: KEYCLOAK_ADMIN_CLIENT_ID
+    value: "user-service-admin-client" # veya sizin client adınız
