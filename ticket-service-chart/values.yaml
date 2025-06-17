@@ -25,6 +25,8 @@ env:
     value: "account"
   - name: KEYCLOAK_ADMIN_CLIENT_ID
     value: "ticket-service-admin-client"
+  - name: USER_SERVICE_URL 
+    value: "http://user-service:80"
 
 # Kubernetes Secret'larından alınacak ortam değişkenleri
 envFromSecret:
