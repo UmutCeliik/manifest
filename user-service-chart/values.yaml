@@ -3,34 +3,32 @@ replicaCount: 1
 image:
   repository: harbor.cloudpro.com.tr/helpdesk/user_service
   pullPolicy: IfNotPresent
-  tag: ""
+  # tag: "" alanı CI/CD tarafından güncellenir
 
 service:
   type: ClusterIP
   port: 80
 
-# config bölümünü bu şekilde bırakıyoruz.
 config:
   databaseUrl: "postgresql://user_admin:Passw0rd12.@10.43.169.88:5432/user_db"
 
-# Ortam değişkenlerinin doğru ve tutarlı olduğundan emin oluyoruz.
+# Bu bölümün TAM OLARAK bu şekilde olduğundan emin olun.
+# Tüm Keycloak URL'leri HTTPS ve DNS adı ile belirtilmiştir.
 extraEnvVars:
-  # Vault adresi DNS adı ile
   - name: VAULT_ADDR
     value: "https://vault.cloudpro.com.tr"
     
-  # Keycloak Issuer URI'si HTTPS ve DNS adı ile
   - name: KEYCLOAK_ISSUER_URI
     value: "https://keycloak.cloudpro.com.tr/realms/helpdesk-realm"
     
-  # Keycloak JWKS URI'si HTTPS ve DNS adı ile
   - name: KEYCLOAK_JWKS_URI
     value: "https://keycloak.cloudpro.com.tr/realms/helpdesk-realm/protocol/openid-connect/certs"
 
-  # Audience, frontend istemcisinin adıyla eşleşmeli
+  # Audience, frontend'den gelen token ile eşleşmeli.
+  # Keycloak'ta 'helpdesk-frontend' client'ından gelen token'lar 'account' audience'ına sahip olabilir.
+  # Eğer bu çalışmazsa 'helpdesk-frontend' olarak denenebilir, ama 'account' genellikle doğrudur.
   - name: KEYCLOAK_TOKEN_AUDIENCE
-    value: "helpdesk-frontend"
-
-  # Admin Client ayarları (varsa)
+    value: "account"
+    
   - name: KEYCLOAK_ADMIN_CLIENT_ID
     value: "user-service-admin-client" # veya sizin client adınız
