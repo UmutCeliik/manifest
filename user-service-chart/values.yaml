@@ -31,4 +31,4 @@ extraEnvVars:
     value: "account"
     
   - name: KEYCLOAK_ADMIN_CLIENT_ID
-    value: "user-service-admin-client" # veya sizin client adınız
+    value: "ticket-service-admin-client" # veya sizin client adınız
