@@ -4,7 +4,7 @@ helm:
     value: harbor.cloudpro.com.tr/helpdesk/user_service
     forcestring: true
   - name: image.tag
-    value: "139"
+    value: "140"
     forcestring: true
   - name: image.name
     value: harbor.cloudpro.com.tr/helpdesk/user_service
